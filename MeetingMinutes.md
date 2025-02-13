@@ -1,6 +1,6 @@
 # Meeting Notes
 **Date**: 12th February 2025  
-**Time**: 3:30 PM to 4:30 PM  
+**Time**: 5:00 PM to 6:00 PM  
 **Location**:   
 **Participants**:  
 - Durggesh  
