@@ -14,13 +14,10 @@ CREATE TABLE cities (
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (name, province_id) -- Ensures city names are unique within a province
 );
-CREATE TABLE hard_skills (
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL  -- Example: Accounting, Coding
-);
-CREATE TABLE soft_skills (
-    id   SERIAL PRIMARY KEY,
-    name VARCHAR(100) UNIQUE NOT NULL  -- Example: Leadership, Teamwork, Communication
+CREATE TABLE user_skills (
+    id    SERIAL PRIMARY KEY,
+    name  VARCHAR(100) UNIQUE NOT NULL, -- Example: Python, SQL, Leadership, Communication
+    type  VARCHAR(10) CHECK (type IN ('soft', 'hard')) NOT NULL -- 'soft' or 'hard'
 );
 CREATE TABLE T_Users (
     id   SERIAL PRIMARY KEY,
@@ -35,4 +32,22 @@ CREATE TABLE T_Users (
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     province_id  INTEGER NOT NULL REFERENCES provinces(id) ON DELETE RESTRICT,
     city_id      INTEGER NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
+    self_intro   TEXT,  -- User's self-introduction
+
+);
+CREATE TABLE user_skills_mapping (
+    user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    skill_id     INTEGER NOT NULL REFERENCES skills(id) ON DELETE CASCADE,
+    proficiency  INTEGER CHECK (proficiency BETWEEN 1 AND 5), -- Only for hard skills
+    PRIMARY KEY (user_id, skill_id)
+);
+CREATE TABLE user_experience (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE,
+    company     VARCHAR(255) NOT NULL,  -- Company name
+    role        VARCHAR(100) NOT NULL,  -- Job title
+    start_date  DATE NOT NULL,  -- Start date of the experience
+    end_date    DATE,  -- NULL if it's the current job
+    is_current  BOOLEAN DEFAULT FALSE,  -- TRUE if it's the most recent job
+    description TEXT  -- Optional job description
 );
