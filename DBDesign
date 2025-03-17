@@ -1,0 +1,38 @@
+CREATE TABLE provinces (
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(100) UNIQUE NOT NULL,
+    country     VARCHAR(100) NOT NULL,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE cities (
+    id          SERIAL PRIMARY KEY,
+    name        VARCHAR(100) NOT NULL,
+    province_id INTEGER NOT NULL REFERENCES provinces(id) ON DELETE CASCADE,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (name, province_id) -- Ensures city names are unique within a province
+);
+CREATE TABLE hard_skills (
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL  -- Example: Accounting, Coding
+);
+CREATE TABLE soft_skills (
+    id   SERIAL PRIMARY KEY,
+    name VARCHAR(100) UNIQUE NOT NULL  -- Example: Leadership, Teamwork, Communication
+);
+CREATE TABLE T_Users (
+    id   SERIAL PRIMARY KEY,
+    first_name   VARCHAR(50) NOT NULL,
+    last_name    VARCHAR(50) NOT NULL,
+    email        VARCHAR(100) UNIQUE NOT NULL,
+    phone      VARCHAR(20) NOT NULL,
+    password     TEXT NOT NULL,
+    photo_url    TEXT,  -- Stores profile photo URL
+    is_active    BOOLEAN DEFAULT TRUE,
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    province_id  INTEGER NOT NULL REFERENCES provinces(id) ON DELETE RESTRICT,
+    city_id      INTEGER NOT NULL REFERENCES cities(id) ON DELETE RESTRICT,
+);
