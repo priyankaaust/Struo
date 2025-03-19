@@ -3,7 +3,8 @@ CREATE TABLE provinces (
     name        VARCHAR(100) UNIQUE NOT NULL,
     country     VARCHAR(100) NOT NULL,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    user_id     INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE cities (
@@ -12,12 +13,24 @@ CREATE TABLE cities (
     province_id INTEGER NOT NULL REFERENCES provinces(id) ON DELETE CASCADE,
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    UNIQUE (name, province_id) -- Ensures city names are unique within a province
+    UNIQUE (name, province_id) -- Ensures city names are unique within a province,
+    user_id     INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE
 );
 CREATE TABLE user_skills (
     id    SERIAL PRIMARY KEY,
     name  VARCHAR(100) UNIQUE NOT NULL, -- Example: Python, SQL, Leadership, Communication
-    type  VARCHAR(10) CHECK (type IN ('soft', 'hard')) NOT NULL -- 'soft' or 'hard'
+    type  VARCHAR(10) CHECK (type IN ('soft', 'hard')) NOT NULL -- 'soft' or 'hard',
+    user_id     INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE T_Images (
+    id          SERIAL PRIMARY KEY,
+    user_id     INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE,
+    image_url   TEXT NOT NULL,  -- Stores image file path or URL
+    image_type  VARCHAR(50) NOT NULL,  -- Defines image usage (profile, cover, document, etc.),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE T_Users (
     id   SERIAL PRIMARY KEY,
@@ -26,7 +39,7 @@ CREATE TABLE T_Users (
     email        VARCHAR(100) UNIQUE NOT NULL,
     phone      VARCHAR(20) NOT NULL,
     password     TEXT NOT NULL,
-    photo_url    TEXT,  -- Stores profile photo URL
+    T_Images_ID  INTEGER REFERENCES T_Images(id) ON DELETE CASCADE,  -- Stores profile photo URL
     is_active    BOOLEAN DEFAULT TRUE,
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
@@ -36,10 +49,12 @@ CREATE TABLE T_Users (
 
 );
 CREATE TABLE user_skills_mapping (
-    user_id      INTEGER NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    user_id      INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE,
     skill_id     INTEGER NOT NULL REFERENCES skills(id) ON DELETE CASCADE,
     proficiency  INTEGER CHECK (proficiency BETWEEN 1 AND 5), -- Only for hard skills
-    PRIMARY KEY (user_id, skill_id)
+    PRIMARY KEY (user_id, skill_id),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 CREATE TABLE user_experience (
     id          SERIAL PRIMARY KEY,
@@ -49,5 +64,45 @@ CREATE TABLE user_experience (
     start_date  DATE NOT NULL,  -- Start date of the experience
     end_date    DATE,  -- NULL if it's the current job
     is_current  BOOLEAN DEFAULT FALSE,  -- TRUE if it's the most recent job
-    description TEXT  -- Optional job description
+    description TEXT  -- Optional job description,
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+CREATE TABLE T_BusinessAccounts (
+    id              SERIAL PRIMARY KEY,
+    user_id         INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE, -- The business owner
+    business_name   VARCHAR(255) NOT NULL,
+    business_type   VARCHAR(100),
+    street_address  TEXT NOT NULL,
+    customer_details VARCHAR(255),
+    business_details VARCHAR(255),
+    business_line VARCHAR(255),
+    city_id         INTEGER NOT NULL REFERENCES T_Cities(id) ON DELETE RESTRICT,
+    province_id     INTEGER NOT NULL REFERENCES T_Provinces(id) ON DELETE RESTRICT,
+    postal_code     VARCHAR(20),
+    created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+CREATE TABLE T_BusinessLocations (
+    id            SERIAL PRIMARY KEY,
+    business_id   INTEGER NOT NULL REFERENCES T_BusinessAccounts(id) ON DELETE CASCADE,
+    location_name VARCHAR(255),  -- Example: 'Head Office', 'Branch 1'
+    street_address TEXT NOT NULL,
+    city_id       INTEGER NOT NULL REFERENCES T_Cities(id) ON DELETE RESTRICT,
+    province_id   INTEGER NOT NULL REFERENCES T_Provinces(id) ON DELETE RESTRICT,
+    postal_code   VARCHAR(20),
+    country       VARCHAR(100),
+    latitude      DECIMAL(10, 6),  -- Optional for map integration
+    longitude     DECIMAL(10, 6),  -- Optional for map integration
+    created_at    TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+CREATE TABLE T_BusinessProperties (
+    id           SERIAL PRIMARY KEY,
+    business_id  INTEGER NOT NULL REFERENCES T_BusinessAccounts(id) ON DELETE CASCADE,
+    property     VARCHAR(100) NOT NULL,  -- Example: 'age_group', 'gender', 'education_level'
+    value        VARCHAR(255) NOT NULL   -- Example: '18-24', 'Male', 'Bachelor’s',
+    prompt VARCHAR(255)
+);
+
