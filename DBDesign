@@ -99,10 +99,26 @@ CREATE TABLE T_BusinessLocations (
 
 
 CREATE TABLE T_BusinessProperties (
+    id          SERIAL PRIMARY KEY,
+    group_name        VARCHAR(100) UNIQUE NOT NULL,  -- Example: 'age_group', 'gender', 'education_level'
+    description TEXT,                           -- Example: 'Customer age range targeted by the business'
+    is_active    BOOLEAN DEFAULT TRUE,
+    is_displayed BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE T_BusinessPropertyValues (
+    id          SERIAL PRIMARY KEY,
+    property_id INTEGER NOT NULL REFERENCES T_BusinessProperties(id) ON DELETE CASCADE,
+    value       VARCHAR(100) NOT NULL,  -- Example: '18-24', 'Male', 'Bachelor’s'
+    description TEXT,                     -- Example: 'Young adults aged 18 to 24'
+    is_active    BOOLEAN DEFAULT TRUE,
+    is_displayed BOOLEAN DEFAULT TRUE
+);
+
+CREATE TABLE T_BusinessPropertyAssignments (
     id           SERIAL PRIMARY KEY,
     business_id  INTEGER NOT NULL REFERENCES T_BusinessAccounts(id) ON DELETE CASCADE,
-    property     VARCHAR(100) NOT NULL,  -- Example: 'age_group', 'gender', 'education_level'
-    value        VARCHAR(255) NOT NULL   -- Example: '18-24', 'Male', 'Bachelor’s',
-    prompt VARCHAR(255)
+    property_value_id INTEGER NOT NULL REFERENCES T_BusinessPropertyValues(id) ON DELETE CASCADE
 );
+
 
