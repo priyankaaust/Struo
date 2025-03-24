@@ -121,4 +121,28 @@ CREATE TABLE T_BusinessPropertyAssignments (
     property_value_id INTEGER NOT NULL REFERENCES T_BusinessPropertyValues(id) ON DELETE CASCADE
 );
 
+CREATE TABLE T_BusinessRepresentatives (
+    id                SERIAL PRIMARY KEY,
+    business_id       INTEGER NOT NULL REFERENCES T_BusinessAccounts(id) ON DELETE CASCADE,
+    first_name        VARCHAR(100) NOT NULL,
+    last_name         VARCHAR(100) NOT NULL,
+    phone             VARCHAR(20) UNIQUE NOT NULL,  -- Ensure unique phone numbers
+    position          VARCHAR(150) NOT NULL,        -- Example: CEO, Manager, Sales Lead
+    professional_summary TEXT,                      -- Short bio or summary
+    T_Images_ID  INTEGER REFERENCES T_Images(id) ON DELETE CASCADE,  -- Stores profile photo URL
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE T_BusinessTeams (
+    id           SERIAL PRIMARY KEY,
+    business_id  INTEGER NOT NULL REFERENCES T_BusinessAccounts(id) ON DELETE CASCADE,
+    team_name    VARCHAR(255) NOT NULL,  -- Example: 'Marketing Team', 'Development Team'
+    description  TEXT,  -- Brief description of the team
+    created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 
