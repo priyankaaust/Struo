@@ -188,24 +188,35 @@ CREATE TABLE T_PersonalityTypes (
 CREATE TABLE T_PersonalityMotivations (
     id              SERIAL PRIMARY KEY,
     personality_id  INTEGER NOT NULL REFERENCES T_PersonalityTypes(id) ON DELETE CASCADE,
-    motivation      VARCHAR(255) NOT NULL
-);
-
-CREATE TABLE T_TrainingContentCard (
-    id              SERIAL PRIMARY KEY,
-    personality_id  INTEGER NOT NULL REFERENCES T_PersonalityTypes(id) ON DELETE CASCADE,
-    motivation      VARCHAR(255) NOT NULL
+    motivation      VARCHAR(255) NOT NULL,
+    user_id      INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE
 );
 
 CREATE TABLE T_TrainingTypes (
     id               SERIAL PRIMARY KEY,
     training_name    VARCHAR(255) NOT NULL UNIQUE,  -- Name of training type (e.g., "Technical Training")
-    description      TEXT  -- Short description of the training type
+    description      TEXT  -- Short description of the training type,
+    user_id      INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE
 );
+
+CREATE TABLE T_FetchedTrainingDetails (
+    id               SERIAL PRIMARY KEY,
+    api_source       VARCHAR(255) NOT NULL,  -- API name or URL from which data was fetched
+    training_type_id INTEGER NOT NULL REFERENCES T_TrainingTypes(id) ON DELETE CASCADE,
+    external_id      VARCHAR(255) UNIQUE,  -- Unique ID from the external API (if available)
+    title           VARCHAR(255) NOT NULL,  -- Training title from API
+    description     TEXT,  -- Training description from API
+    provider        VARCHAR(255),  -- Organization offering the training
+    duration_hours  INTEGER CHECK (duration_hours > 0),  -- Duration in hours
+    mode           VARCHAR(50) CHECK (mode IN ('Online', 'Offline', 'Hybrid')),  -- Training mode
+    fetched_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Time of API data retrieval
+);
+
 
 CREATE TABLE T_TrainingDetails (
     id                SERIAL PRIMARY KEY,
     training_type_id  INTEGER NOT NULL REFERENCES T_TrainingTypes(id) ON DELETE CASCADE,
+    t_fetchedtrainingdetails_id  INTEGER NOT NULL REFERENCES T_FetchedTrainingDetails(id) ON DELETE CASCADE,
     title             VARCHAR(255) NOT NULL,  -- Name of the specific training
     description       TEXT,  -- Detailed description of what the training covers
     provider          VARCHAR(255),  -- Organization or instructor providing the training
