@@ -191,6 +191,32 @@ CREATE TABLE T_PersonalityMotivations (
     motivation      VARCHAR(255) NOT NULL
 );
 
+CREATE TABLE T_TrainingContentCard (
+    id              SERIAL PRIMARY KEY,
+    personality_id  INTEGER NOT NULL REFERENCES T_PersonalityTypes(id) ON DELETE CASCADE,
+    motivation      VARCHAR(255) NOT NULL
+);
+
+CREATE TABLE T_TrainingTypes (
+    id               SERIAL PRIMARY KEY,
+    training_name    VARCHAR(255) NOT NULL UNIQUE,  -- Name of training type (e.g., "Technical Training")
+    description      TEXT  -- Short description of the training type
+);
+
+CREATE TABLE T_TrainingDetails (
+    id                SERIAL PRIMARY KEY,
+    training_type_id  INTEGER NOT NULL REFERENCES T_TrainingTypes(id) ON DELETE CASCADE,
+    title             VARCHAR(255) NOT NULL,  -- Name of the specific training
+    description       TEXT,  -- Detailed description of what the training covers
+    provider          VARCHAR(255),  -- Organization or instructor providing the training
+    start_date        DATE,  -- Training start date
+    end_date          DATE,  -- Training end date
+    duration_hours    INTEGER CHECK (duration_hours > 0),  -- Total duration in hours
+    mode             VARCHAR(50) CHECK (mode IN ('Online', 'Offline', 'Hybrid')),  -- How the training is conducted
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Record creation timestamp
+);
+
+
 
 
 
