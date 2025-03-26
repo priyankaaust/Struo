@@ -81,7 +81,10 @@ CREATE TABLE T_BusinessAccounts (
     province_id     INTEGER NOT NULL REFERENCES T_Provinces(id) ON DELETE RESTRICT,
     postal_code     VARCHAR(20),
     created_at  TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    business_usp   TEXT,
+    business_values   TEXT,
+    business_vision   TEXT
 );
 CREATE TABLE T_BusinessLocations (
     id            SERIAL PRIMARY KEY,
@@ -141,6 +144,51 @@ CREATE TABLE T_BusinessTeams (
     description  TEXT,  -- Brief description of the team
     created_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     updated_at   TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE T_TeamInvites (
+    id               SERIAL PRIMARY KEY,
+    team_id          INTEGER NOT NULL REFERENCES T_BusinessTeams(id) ON DELETE CASCADE,
+    invited_by       INTEGER NOT NULL REFERENCES T_BusinessRepresentatives(id) ON DELETE SET NULL,
+    job_tittle  VARCHAR(255) NOT NULL,
+    recipient_email  VARCHAR(255) NOT NULL,  -- Email of the invited person
+    status           VARCHAR(50) NOT NULL DEFAULT 'pending',  -- 'pending', 'accepted', 'declined', 'expired'
+    token            VARCHAR(255) NOT NULL UNIQUE,  -- Unique invitation token for verification
+    expires_at       TIMESTAMP NOT NULL,  -- Expiration date of the invite
+    created_at       TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE T_PersonalityTypes (
+    id              SERIAL PRIMARY KEY,
+    user_id      INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE,
+    personality_type VARCHAR(100) NOT NULL,
+    dominant_btr    VARCHAR(100),
+    dominant_disc   VARCHAR(100),
+    d_score         INTEGER,
+    i_score         INTEGER,
+    s_score         INTEGER,
+    c_score         INTEGER,
+    eq_value        VARCHAR(50),
+    adjustment      INTEGER, 
+    ambition        INTEGER,
+    sociability     INTEGER,
+    sensitivity     INTEGER,
+    prudence        INTEGER,
+    inquisitive     INTEGER,
+    learning_approach INTEGER,
+    adjustment_score  String, 
+    ambition_score    String,
+    sociability_score String,
+    sensitivity_score String,
+    prudence_score    String,
+    inquisitive_score String,
+    learning_approach_score String,
+);
+
+CREATE TABLE T_PersonalityMotivations (
+    id              SERIAL PRIMARY KEY,
+    personality_id  INTEGER NOT NULL REFERENCES T_PersonalityTypes(id) ON DELETE CASCADE,
+    motivation      VARCHAR(255) NOT NULL
 );
 
 
