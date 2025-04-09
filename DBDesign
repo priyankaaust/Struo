@@ -249,6 +249,32 @@ CREATE TABLE T_ModuleCards (
     created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+CREATE TABLE T_NewHireDetails (
+    id                     SERIAL PRIMARY KEY,
+    user_id                INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE,
+    hire_date              DATE NOT NULL,
+    job_title              VARCHAR(255),
+    department             VARCHAR(255),
+    manager_id             INTEGER REFERENCES T_Users(id),
+    location_id            INTEGER REFERENCES T_BusinessLocations(id),
+
+    -- Job Expectations & Requirements
+    job_description        TEXT,
+    vital_qualifications   TEXT,   -- Must-have skills or credentials
+    nice_to_have           TEXT,   -- Optional but beneficial
+    desirable_traits       TEXT,   -- Personality or soft traits
+    weekly_hours           INTEGER CHECK (weekly_hours >= 1 AND weekly_hours <= 168),
+    remuneration           VARCHAR(100),  -- Flexible: e.g., '$25/hr', '$60K/year'
+    urgency_level          VARCHAR(50) CHECK (urgency_level IN ('Immediate', 'Soon', 'Flexible')), -- How fast needed
+
+    contract_type          VARCHAR(50) CHECK (contract_type IN ('Full-Time', 'Part-Time', 'Intern', 'Contractor')),
+    probation_end_date     DATE,
+    onboarding_status      VARCHAR(50) CHECK (onboarding_status IN ('Pending', 'In Progress', 'Completed')) DEFAULT 'Pending',
+    onboarding_notes       TEXT,
+
+    created_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at             TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
 
 
 
