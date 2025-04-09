@@ -226,6 +226,31 @@ CREATE TABLE T_TrainingDetails (
     created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP  -- Record creation timestamp
 );
 
+CREATE TABLE T_TrainingModules (
+    id                SERIAL PRIMARY KEY,
+    training_id       INTEGER NOT NULL REFERENCES T_TrainingDetails(id) ON DELETE CASCADE,
+    title             VARCHAR(255) NOT NULL,  -- Module title
+    description       TEXT,  -- Overview of what the module covers
+    sequence_order    INTEGER NOT NULL,  -- The order of the module in the course
+    duration_minutes  INTEGER CHECK (duration_minutes > 0),  -- Estimated duration in minutes
+    is_optional       BOOLEAN DEFAULT FALSE,  -- Whether the module is optional
+    content_url       TEXT,  -- Link to video, document, or slides
+    created_at        TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+CREATE TABLE T_ModuleCards (
+    id              SERIAL PRIMARY KEY,
+    module_id       INTEGER NOT NULL REFERENCES T_TrainingModules(id) ON DELETE CASCADE,
+    title           VARCHAR(255) NOT NULL,  -- Card title
+    content         TEXT,  -- The main content (text/HTML/Markdown)
+    media_url       TEXT,  -- Optional: image, video, etc.
+    card_type       VARCHAR(50) CHECK (card_type IN ('text', 'image', 'video', 'quiz', 'activity')),  -- Type of card
+    sequence_order  INTEGER NOT NULL,  -- Position within the module
+    created_at      TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+
+
 
 
 
