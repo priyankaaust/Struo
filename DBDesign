@@ -175,13 +175,13 @@ CREATE TABLE T_PersonalityTypes (
     prudence        INTEGER,
     inquisitive     INTEGER,
     learning_approach INTEGER,
-    adjustment_score  String, 
-    ambition_score    String,
-    sociability_score String,
-    sensitivity_score String,
-    prudence_score    String,
-    inquisitive_score String,
-    learning_approach_score String,
+    adjustment_score  VARCHAR(255), 
+    ambition_score    VARCHAR(255),
+    sociability_score VARCHAR(255),
+    sensitivity_score VARCHAR(255),
+    prudence_score    VARCHAR(255),
+    inquisitive_score VARCHAR(255),
+    learning_approach_score VARCHAR(255),
 );
 
 CREATE TABLE T_PersonalityMotivations (
