@@ -181,7 +181,7 @@ CREATE TABLE T_PersonalityTypes (
     sensitivity_score VARCHAR(255),
     prudence_score    VARCHAR(255),
     inquisitive_score VARCHAR(255),
-    learning_approach_score VARCHAR(255),
+    learning_approach_score VARCHAR(255)
 );
 
 CREATE TABLE T_PersonalityMotivations (
@@ -194,7 +194,7 @@ CREATE TABLE T_PersonalityMotivations (
 CREATE TABLE T_TrainingTypes (
     id               SERIAL PRIMARY KEY,
     training_name    VARCHAR(255) NOT NULL UNIQUE,  -- Name of training type (e.g., "Technical Training")
-    description      TEXT  -- Short description of the training type,
+    description      TEXT,  -- Short description of the training type,
     user_id      INTEGER NOT NULL REFERENCES T_Users(id) ON DELETE CASCADE
 );
 
